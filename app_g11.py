@@ -44,12 +44,17 @@ with last_co:
 #image = 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/420px-Premier_League_Logo.svg.png'
 ### Initial layout
 #st.image(image, width=200)
+
+
 st.header('English Premier League Player Performance')
-position = st.sidebar.selectbox('Select Position', ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'])
 
-metric = st.sidebar.selectbox('Select Metric', ['Goals Scored', 'Assists', 'Yellow Cards', 'Red Cards', 'Minutes Played'])
+position = st.selectbox('Select Position', ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'])
+metric = st.selectbox('Select Metric', ['Goals Scored', 'Assists', 'Yellow Cards', 'Red Cards', 'Minutes Played'])
 
-button = st.sidebar.button('Fetch Results')
+button = st.button('Fetch Results')
+
+
+
 
 # Data Functionality
 
