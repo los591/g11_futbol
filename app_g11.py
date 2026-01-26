@@ -1,16 +1,18 @@
 import streamlit as st
 import pandas as pd
 import psycopg2
+import plotly.express as px
 import plotly.graph_objects as go
 
-# --- DB Connection using Streamlit secrets ---
+# --- DB Connection ---
 conn = psycopg2.connect(
-    host=st.secrets["SUPABASE_HOST"],
-    port=st.secrets["SUPABASE_PORT"],
-    dbname=st.secrets["SUPABASE_DB"],
-    user=st.secrets["SUPABASE_USER"],
-    password=st.secrets["SUPABASE_PASSWORD"]
+    host=st.secrets["DB_HOST"],
+    port=st.secrets["DB_PORT"],
+    dbname=st.secrets["DB_NAME"],
+    user=st.secrets["DB_USER"],
+    password=st.secrets["DB_PASSWORD"]
 )
+
 
 st.title("🌍 Where Soccer Players from a Country Play & Their Performance")
 
