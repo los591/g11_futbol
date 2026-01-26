@@ -23,15 +23,29 @@ year = st.number_input("Select Year", min_value=2000, max_value=2026, value=2024
 # Helper: fetch data from Supabase
 # --------------------------------------------------
 @st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600)
 def fetch_country_data(country: str):
-    """
-    Pull joined data using Supabase PostgREST.
-    Assumes subset tables already loaded.
-    """
 
-    response = (
+    # 1️⃣ Players
+    players = (
         supabase
-        .table("fixtures_players_performance")
+        .table("players_subset")
+        .select("player_id, player_name, nationality, photo")
+        .eq("nationality", country)
+        .execute()
+    ).data
+
+    if not players:
+        return pd.DataFrame()
+
+    players_df = pd.DataFrame(players)
+
+    # 2️⃣ Player performances
+    player_ids = players_df["player_id"].tolist()
+
+    fpp = (
+        supabase
+        .table("fixtures_players_performance_subset")
         .select("""
             fixture_id,
             fixture_date,
@@ -43,38 +57,57 @@ def fetch_country_data(country: str):
             cards_yellow,
             cards_red,
             player_rating,
-            player_id,
-            player_name,
-            player_photo,
-            fixtures (
-                home_team_name,
-                away_team_name,
-                league_id,
-                leagues (
-                    name,
-                    country_name
-                )
-            ),
-            players!inner (
-                nationality
-            )
+            player_id
         """)
-        .eq("players.nationality", country)
+        .in_("player_id", player_ids)
         .execute()
-    )
+    ).data
 
-    if not response.data:
+    if not fpp:
         return pd.DataFrame()
 
-    df = pd.json_normalize(response.data)
+    fpp_df = pd.DataFrame(fpp)
 
-    # Clean column names
+    # 3️⃣ Fixtures
+    fixture_ids = fpp_df["fixture_id"].unique().tolist()
+
+    fixtures = (
+        supabase
+        .table("fixtures_subset")
+        .select("""
+            fixture_id,
+            home_team_name,
+            away_team_name,
+            league_id
+        """)
+        .in_("fixture_id", fixture_ids)
+        .execute()
+    ).data
+
+    fixtures_df = pd.DataFrame(fixtures)
+
+    # 4️⃣ Leagues
+    leagues = (
+        supabase
+        .table("leagues_subset")
+        .select("id, name, country_name")
+        .execute()
+    ).data
+
+    leagues_df = pd.DataFrame(leagues)
+
+    # 5️⃣ Merge everything locally
+    df = (
+        fpp_df
+        .merge(players_df, on="player_id", how="left")
+        .merge(fixtures_df, on="fixture_id", how="left")
+        .merge(leagues_df, left_on="league_id", right_on="id", how="left")
+    )
+
     df = df.rename(columns={
         "team": "team_name",
-        "fixtures.home_team_name": "home_team_name",
-        "fixtures.away_team_name": "away_team_name",
-        "fixtures.leagues.name": "league_name",
-        "fixtures.leagues.country_name": "country_name"
+        "photo": "player_photo",
+        "name": "league_name"
     })
 
     return df
