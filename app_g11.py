@@ -46,7 +46,7 @@ with last_co:
 #st.image(image, width=200)
 
 
-st.header('English Premier League Player Performance')
+st.header('G11 Productions - English Premier League Player Performance')
 
 position = st.selectbox('Select Position', ['Goalkeeper', 'Defender', 'Midfielder', 'Forward'])
 metric = st.selectbox('Select Metric', ['Goals Scored', 'Assists', 'Yellow Cards', 'Red Cards', 'Minutes Played'])
