@@ -38,8 +38,8 @@ def get_scores():
 
 left_co, cent_co,last_co = st.columns(3)
 with last_co:
-    st.image('https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/420px-Premier_League_Logo.svg.png')
-
+    #st.image('https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/420px-Premier_League_Logo.svg.png')
+    st.image('https://i.postimg.cc/nc6Svs1X/Screenshot-2026-05-22-at-2-11-30-PM.png')
 
 #image = 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Premier_League_Logo.svg/420px-Premier_League_Logo.svg.png'
 ### Initial layout
